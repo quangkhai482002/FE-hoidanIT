@@ -1,24 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import {
+  BrowserRouter,
+  // as Router
+  // Route,
+  // Link,
+  // Routes,
+  // Switch,
+} from "react-router-dom";
+// import _ from "lodash";
+// import Navi from "./components/navigation/navi";
+import AppRoutes from "./routes/appRoutes";
+import "./App.scss";
 
 function App() {
+  const [account, setAccount] = useState({});
+  useEffect(() => {
+    let session = sessionStorage.getItem("account");
+    if (session) {
+      setAccount(JSON.parse(session));
+    }
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <BrowserRouter>
+        {/* <div className="app-header">
+          <Navi />
+        </div> */}
+        <div className="App">
+          <AppRoutes />
+        </div>
+      </BrowserRouter>
+    </>
   );
 }
 
