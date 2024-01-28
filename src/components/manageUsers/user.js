@@ -1,50 +1,37 @@
 import React, { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
-import { Button, message, Modal, Input } from "antd";
+import {
+  Button,
+  message,
+  Modal,
+  Input,
+  Space,
+  Table,
+  Form,
+  Select,
+} from "antd";
 import "./user.scss";
-import { Space, Table, Form, Select } from "antd";
 import { fetchAllUsers, deleteUsers } from "../../services/userService";
 import { DeleteOutlined, EditOutlined, UserOutlined } from "@ant-design/icons";
 import { fetchGroup } from "../../services/userService";
+import ModalDelete from "./ModalDelete";
+import ModalCreate from "./ModalCreate";
 
-const Users = (props) => {
+const Users = () => {
   const [listUser, setListUser] = useState([]);
-  // const [currentPage, setCurrentPage] = useState(1);
-  // const [currentLimit, setCurrentLimit] = useState(20);
-  // const [totalPages, setTotalPages] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dataModal, setDataModal] = useState({});
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [userGroup, setUserGroup] = useState([]);
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
   const fetchUsers = async () => {
-    // let res = await fetchAllUsers(currentPage, currentLimit);
     let res = await fetchAllUsers();
     if (res && res.data && res.data.EC === 0) {
-      // console.log("res", res.data.DT);
-      // setTotalPages(res.data.EC.totalPages);
       setListUser(res.data.DT);
-    }
-  };
-
-  useEffect(() => {
-    getGroup();
-  }, []);
-  const getGroup = async () => {
-    let data = await fetchGroup();
-    if (data && data.data && data.data.EC === 0) {
-      setUserGroup(data.data.DT);
-    } else {
-      message.error(data.data.EM);
     }
   };
 
@@ -86,7 +73,7 @@ const Users = (props) => {
             icon={<DeleteOutlined style={{ color: "red" }} />}
           />
           <Button
-            onClick={() => handleEditUser(record)}
+            onClick={() => handleCreateUser()}
             type="text"
             icon={<EditOutlined style={{ color: "blue" }} />}
           />
@@ -115,15 +102,15 @@ const Users = (props) => {
     setIsModalOpen(false);
   };
 
-  //==============   Edit user   ===================
-  const handleEditUser = (record) => {
-    setDataEdit(record);
+  //==============   Create user   ===================
+  const handleCreateUser = () => {
+    setDataEdit();
     setIsModalEditOpen(true);
   };
-  const handleEditOk = async () => {
+  const handleCreateOk = async () => {
     setIsModalEditOpen(false);
   };
-  const handleEditCancel = () => {
+  const handleCreateCancel = () => {
     setIsModalEditOpen(false);
   };
 
@@ -134,114 +121,30 @@ const Users = (props) => {
           <h3>Table users</h3>
         </div>
 
+        <div className="add-user">
+          <Button
+            type="primary"
+            icon={<UserOutlined />}
+            onClick={() => handleCreateUser()}
+          >
+            Add user
+          </Button>
+        </div>
+
         {/* ==============   Delete user   =================== */}
-        <Modal
-          title="Confirm delete user"
+        <ModalDelete
           open={isModalOpen}
           onOk={handleOk}
           onCancel={handleCancel}
+          dataModal={dataModal}
         />
 
         {/* ==============   Edit user   =================== */}
-        <Modal
-          title="Edit user"
+        <ModalCreate
           open={isModalEditOpen}
-          onOk={handleEditOk}
-          onCancel={handleEditCancel}
-        >
-          <Form
-            name="normal_login"
-            className="login-form"
-            initialValues={{
-              remember: true,
-            }}
-            // onFinish={onFinish}
-          >
-            <Form.Item
-              label="Username"
-              name="username"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Username!",
-                },
-              ]}
-            >
-              <Input
-                size="large"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your email!",
-                },
-              ]}
-            >
-              <Input
-                size="large"
-                placeholder="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </Form.Item>
-
-            <Form.Item label="Phone" name="phone">
-              <Input
-                size="large"
-                placeholder="Username"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </Form.Item>
-
-            <Form.Item label="Address" name="address">
-              <Input
-                size="large"
-                placeholder="Username"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-              />
-            </Form.Item>
-
-            <Form.Item label="Group" name="group">
-              <Select
-                options={userGroup.map((group) => ({
-                  label: group.name,
-                  value: group.id,
-                }))}
-              />
-            </Form.Item>
-
-            <Form.Item label="Sex" name="sex">
-              <Select
-                defaultValue="123"
-                // style={{
-                //   width: 120,
-                // }}
-                // onChange={handleChange}
-                options={[
-                  {
-                    value: "123",
-                    label: "123",
-                  },
-                  {
-                    value: "khai",
-                    label: "khai",
-                  },
-                ]}
-              />
-            </Form.Item>
-          </Form>
-        </Modal>
-        {/* ========================================================= */}
+          onOk={handleCreateOk}
+          onCancel={handleCreateCancel}
+        />
 
         <div className="table-data">
           <Table columns={columns} dataSource={listUser} />
