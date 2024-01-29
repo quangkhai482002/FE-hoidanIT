@@ -73,7 +73,7 @@ const Users = () => {
             icon={<DeleteOutlined style={{ color: "red" }} />}
           />
           <Button
-            onClick={() => handleCreateUser()}
+            // onClick={() => handleCreateUser()}
             type="text"
             icon={<EditOutlined style={{ color: "blue" }} />}
           />
@@ -139,11 +139,12 @@ const Users = () => {
           dataModal={dataModal}
         />
 
-        {/* ==============   Edit user   =================== */}
+        {/* ==============   Create user   =================== */}
         <ModalCreate
           open={isModalEditOpen}
           onOk={handleCreateOk}
           onCancel={handleCreateCancel}
+          fetchUsers={fetchUsers}
         />
 
         <div className="table-data">

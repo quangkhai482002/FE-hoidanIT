@@ -1,12 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Button, message, Modal, Input, Space, Form, Select } from "antd";
-import { fetchGroup } from "../../services/userService";
-
+import { fetchGroup, createNewUser } from "../../services/userService";
+import _, { set } from "lodash";
 const ModalCreate = (props) => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
+  const defaultUserData = {
+    username: "",
+    email: "",
+    password: "",
+    phone: "",
+    address: "",
+    groupID: "",
+    sex: "",
+  };
+  const validInputDefault = {
+    username: true,
+    email: true,
+    password: true,
+    phone: true,
+    address: true,
+    groupID: true,
+    sex: true,
+  };
+  const [form] = Form.useForm();
+  const [userData, setUserData] = useState(defaultUserData);
+  const [validInput, setValidInput] = useState(validInputDefault);
 
   const [userGroup, setUserGroup] = useState([]);
   useEffect(() => {
@@ -20,20 +37,57 @@ const ModalCreate = (props) => {
       message.error(data.data.EM);
     }
   };
+  const handleOnChangeInput = (value, name) => {
+    let _userData = _.cloneDeep(userData);
+    _userData[name] = value;
+    setUserData(_userData);
+  };
+  const checkValidInput = () => {
+    setValidInput(validInputDefault);
+    // console.log(userData);
+    let arr = ["username", "email", "password", "groupID"];
+    let check = true;
+    for (let i = 0; i < arr.length; i++) {
+      if (!userData[arr[i]]) {
+        let _validInput = _.cloneDeep(validInputDefault);
+        _validInput[arr[i]] = false;
+        setValidInput(_validInput);
+        message.error(`Empty input ${arr[i]}`);
+        check = false;
+        break;
+      }
+    }
+    return check;
+  };
+  const onFinish = async () => {
+    let check = checkValidInput();
+    if (check === true) {
+      let res = await createNewUser(userData);
+      // console.log(res);
+      if (res && res.data && res.data.EC === 0) {
+        message.success("Create user success");
+        props.onCancel();
+        props.fetchUsers();
+        form.resetFields(); // Reset form fields
+      }
+    } else {
+      message.error("Error create user");
+    }
+  };
   return (
     <Modal
-      title="Edit user"
+      title="Add user"
       open={props.open}
-      onOk={props.onOk}
+      onOk={onFinish}
       onCancel={props.onCancel}
     >
       <Form
+        form={form}
         name="normal_login"
         className="login-form"
         initialValues={{
           remember: true,
         }}
-        // onFinish={onFinish}
       >
         <Form.Item
           label="Username"
@@ -48,8 +102,8 @@ const ModalCreate = (props) => {
           <Input
             size="large"
             placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={userData.username}
+            onChange={(e) => handleOnChangeInput(e.target.value, "username")}
           />
         </Form.Item>
 
@@ -66,53 +120,83 @@ const ModalCreate = (props) => {
           <Input
             size="large"
             placeholder="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={userData.email}
+            onChange={(e) => handleOnChangeInput(e.target.value, "email")}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[
+            {
+              required: true,
+              message: "Please input your password!",
+            },
+          ]}
+        >
+          <Input
+            size="password"
+            placeholder="password"
+            value={userData.email}
+            onChange={(e) => handleOnChangeInput(e.target.value, "password")}
           />
         </Form.Item>
 
         <Form.Item label="Phone" name="phone">
           <Input
             size="large"
-            placeholder="Username"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            placeholder="phone"
+            value={userData.phone}
+            onChange={(e) => handleOnChangeInput(e.target.value, "phone")}
           />
         </Form.Item>
 
         <Form.Item label="Address" name="address">
           <Input
             size="large"
-            placeholder="Username"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            placeholder="address"
+            value={userData.address}
+            onChange={(e) => handleOnChangeInput(e.target.value, "address")}
           />
         </Form.Item>
 
-        <Form.Item label="Group" name="group">
+        <Form.Item
+          label="Group"
+          name="groupID"
+          rules={[
+            {
+              required: true,
+              message: "Please input your email!",
+            },
+          ]}
+        >
           <Select
-            options={userGroup.map((group) => ({
-              label: group.name,
-              value: group.id,
+            // defaultValue={userGroup[0].id}
+            options={userGroup.map((groupID) => ({
+              label: groupID.name,
+              value: groupID.id,
             }))}
+            onChange={(value) => handleOnChangeInput(value, "groupID")}
           />
         </Form.Item>
 
         <Form.Item label="Sex" name="sex">
           <Select
-            defaultValue="123"
+            defaultValue={userData.sex}
+            onChange={(value) => handleOnChangeInput(value, "sex")}
             // style={{
             //   width: 120,
             // }}
-            // onChange={handleChange}
+
             options={[
               {
-                value: "123",
-                label: "123",
+                value: "male",
+                label: "male",
               },
               {
-                value: "khai",
-                label: "khai",
+                value: "female",
+                label: "female",
               },
             ]}
           />
