@@ -6,3 +6,9 @@
   margin: 0 auto;
   width: 80%;
 }
+.column-no {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

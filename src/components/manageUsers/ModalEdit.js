@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Button, message, Modal, Input, Space, Form, Select } from "antd";
-import { fetchGroup, createNewUser } from "../../services/userService";
+import { fetchGroup, updateCurrentUser } from "../../services/userService";
 import _, { set } from "lodash";
-const ModalCreate = (props) => {
+const ModalEdit = (props) => {
   const defaultUserData = {
     username: "",
     email: "",
@@ -12,23 +12,18 @@ const ModalCreate = (props) => {
     groupID: "",
     sex: "",
   };
-  const validInputDefault = {
-    username: true,
-    email: true,
-    password: true,
-    phone: true,
-    address: true,
-    groupID: true,
-    sex: true,
-  };
-  const [form] = Form.useForm();
   const [userData, setUserData] = useState(defaultUserData);
-  const [validInput, setValidInput] = useState(validInputDefault);
 
   const [userGroup, setUserGroup] = useState([]);
   useEffect(() => {
     getGroup();
   }, []);
+
+  const formRef = useRef(null);
+  useEffect(() => {
+    setUserData(props.dataModalUser);
+    formRef.current?.setFieldsValue(props.dataModalUser);
+  }, [props.dataModalUser]);
 
   const getGroup = async () => {
     let data = await fetchGroup();
@@ -43,50 +38,48 @@ const ModalCreate = (props) => {
     _userData[name] = value;
     setUserData(_userData);
   };
-  const checkValidInput = () => {
-    setValidInput(validInputDefault);
-    let arr = ["username", "email", "password", "groupID"];
-    let check = true;
-    for (let i = 0; i < arr.length; i++) {
-      if (!userData[arr[i]]) {
-        let _validInput = _.cloneDeep(validInputDefault);
-        _validInput[arr[i]] = false;
-        setValidInput(_validInput);
-        message.error(`Empty input ${arr[i]}`);
-        check = false;
-        break;
-      }
-    }
-    return check;
-  };
+  // const checkValidInput = () => {
+  //   setValidInput(validInputDefault);
+  //   let arr = ["username", "email", "password", "groupID"];
+  //   let check = true;
+  //   for (let i = 0; i < arr.length; i++) {
+  //     if (!userData[arr[i]]) {
+  //       let _validInput = _.cloneDeep(validInputDefault);
+  //       _validInput[arr[i]] = false;
+  //       setValidInput(_validInput);
+  //       message.error(`Empty input ${arr[i]}`);
+  //       check = false;
+  //       break;
+  //     }
+  //   }
+  //   return check;
+  // };
   const onFinish = async () => {
-    let check = checkValidInput();
-    if (check === true) {
-      let res = await createNewUser(userData);
-      if (res && res.data && res.data.EC === 0) {
-        message.success("Create user success");
-        props.onCancel();
-        props.fetchUsers();
-        form.resetFields(); // Reset form fields
-      } else {
-        message.error(res.data.EM);
-      }
+    // let check = checkValidInput();
+    // if (check === true) {
+    let res = await updateCurrentUser(userData);
+    if (res && res.data && res.data.EC === 0) {
+      message.success("Edit user success");
+      props.onCancel();
+      props.fetchUsers();
+    } else {
+      message.error(res.data.EM);
     }
+    // }
   };
   return (
     <Modal
-      title="Create user"
+      title="Edit user"
       open={props.open}
       onOk={onFinish}
       onCancel={props.onCancel}
+      dataModalUser={props.dataModalUser}
     >
       <Form
-        form={form}
+        ref={formRef}
         name="normal_login"
         className="login-form"
-        initialValues={{
-          remember: true,
-        }}
+        initialValues={userData}
       >
         <Form.Item
           label="Username"
@@ -171,7 +164,6 @@ const ModalCreate = (props) => {
           ]}
         >
           <Select
-            // defaultValue={userGroup[0].id}
             options={userGroup.map((groupID) => ({
               label: groupID.name,
               value: groupID.id,
@@ -184,10 +176,6 @@ const ModalCreate = (props) => {
           <Select
             defaultValue={userData.sex}
             onChange={(value) => handleOnChangeInput(value, "sex")}
-            // style={{
-            //   width: 120,
-            // }}
-
             options={[
               {
                 value: "male",
@@ -204,4 +192,4 @@ const ModalCreate = (props) => {
     </Modal>
   );
 };
-export default ModalCreate;
+export default ModalEdit;

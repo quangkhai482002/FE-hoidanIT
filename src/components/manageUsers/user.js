@@ -16,13 +16,18 @@ import { DeleteOutlined, EditOutlined, UserOutlined } from "@ant-design/icons";
 import { fetchGroup } from "../../services/userService";
 import ModalDelete from "./ModalDelete";
 import ModalCreate from "./ModalCreate";
+import ModalEdit from "./ModalEdit";
 
 const Users = () => {
   const [listUser, setListUser] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [dataModal, setDataModal] = useState({});
+  const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
+  const [dataCreate, setDataCreate] = useState({});
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
-  const [dataEdit, setDataEdit] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [dataModalUser, setDataModalUser] = useState({});
 
   useEffect(() => {
     fetchUsers();
@@ -37,6 +42,11 @@ const Users = () => {
 
   const columns = [
     {
+      title: "No.",
+      key: "no.",
+      render: (text, record, index) => (currentPage - 1) * pageSize + index + 1,
+    },
+    {
       title: "ID",
       dataIndex: "id",
       key: "id",
@@ -47,14 +57,31 @@ const Users = () => {
       key: "email",
     },
     {
+      title: "Password",
+      dataIndex: "password",
+      key: "password",
+      width: 100,
+      className: "column-no", // Add this line
+    },
+    {
       title: "User name",
       dataIndex: "username",
       key: "username",
     },
     {
-      title: "Password",
-      dataIndex: "password",
-      key: "password",
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+    },
+    {
+      title: "Sex",
+      dataIndex: "sex",
+      key: "sex",
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      key: "phone",
     },
     {
       title: "Role",
@@ -62,6 +89,7 @@ const Users = () => {
       key: "Group",
       render: (Group) => (Group ? `${Group.name}` : "No role"),
     },
+
     {
       title: "Action",
       key: "action",
@@ -73,7 +101,7 @@ const Users = () => {
             icon={<DeleteOutlined style={{ color: "red" }} />}
           />
           <Button
-            // onClick={() => handleCreateUser()}
+            onClick={() => handleEditUser(record)}
             type="text"
             icon={<EditOutlined style={{ color: "blue" }} />}
           />
@@ -84,7 +112,7 @@ const Users = () => {
   //==============   Delete user   ===================
   const handleDeleteUser = async (record) => {
     setDataModal(record);
-    setIsModalOpen(true);
+    setIsModalDeleteOpen(true);
   };
 
   const handleOk = async () => {
@@ -95,22 +123,35 @@ const Users = () => {
     } else {
       message.error(res.data.EM);
     }
-    setIsModalOpen(false);
+    setIsModalDeleteOpen(false);
   };
   const handleCancel = () => {
     setDataModal({});
-    setIsModalOpen(false);
+    setIsModalDeleteOpen(false);
   };
 
   //==============   Create user   ===================
   const handleCreateUser = () => {
-    setDataEdit();
-    setIsModalEditOpen(true);
+    // setActionModal("CREATE");
+    setDataCreate();
+    setIsModalCreateOpen(true);
   };
   const handleCreateOk = async () => {
-    setIsModalEditOpen(false);
+    setIsModalCreateOpen(false);
   };
   const handleCreateCancel = () => {
+    setIsModalCreateOpen(false);
+  };
+  //==============   Edit user   ===================
+  const handleEditUser = (record) => {
+    console.log("record", record);
+    setDataModalUser(record);
+    setIsModalEditOpen(true);
+  };
+  const handleEditOk = async () => {
+    setIsModalEditOpen(false);
+  };
+  const handleEditCancel = () => {
     setIsModalEditOpen(false);
   };
 
@@ -131,24 +172,44 @@ const Users = () => {
           </Button>
         </div>
 
-        {/* ==============   Delete user   =================== */}
+        {/* ==============   Modal delete user   =================== */}
         <ModalDelete
-          open={isModalOpen}
+          open={isModalDeleteOpen}
           onOk={handleOk}
           onCancel={handleCancel}
           dataModal={dataModal}
         />
 
-        {/* ==============   Create user   =================== */}
+        {/* ==============   Modal create user   =================== */}
         <ModalCreate
-          open={isModalEditOpen}
+          open={isModalCreateOpen}
           onOk={handleCreateOk}
           onCancel={handleCreateCancel}
           fetchUsers={fetchUsers}
         />
 
+        {/* ==============   Modal edit user   =================== */}
+        <ModalEdit
+          open={isModalEditOpen}
+          onOk={handleEditOk}
+          onCancel={handleEditCancel}
+          fetchUsers={fetchUsers}
+          dataModalUser={dataModalUser}
+        />
+
         <div className="table-data">
-          <Table columns={columns} dataSource={listUser} />
+          <Table
+            columns={columns}
+            dataSource={listUser}
+            pagination={{
+              current: currentPage,
+              pageSize: pageSize,
+              onChange: (page, pageSize) => {
+                setCurrentPage(page);
+                setPageSize(pageSize);
+              },
+            }}
+          />
         </div>
       </div>
     </div>

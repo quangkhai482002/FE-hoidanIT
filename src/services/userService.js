@@ -31,6 +31,9 @@ const fetchGroup = () => {
 const createNewUser = (data) => {
   return axios.post("http://localhost:5000/api/v1/user/create", { ...data });
 };
+const updateCurrentUser = (userData) => {
+  return axios.put("http://localhost:5000/api/v1/user/update", { ...userData });
+};
 export {
   registerNewUser,
   loginUser,
@@ -38,4 +41,5 @@ export {
   deleteUsers,
   fetchGroup,
   createNewUser,
+  updateCurrentUser,
 };
