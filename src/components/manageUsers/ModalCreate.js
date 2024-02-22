@@ -32,10 +32,10 @@ const ModalCreate = (props) => {
 
   const getGroup = async () => {
     let data = await fetchGroup();
-    if (data && data.data && data.data.EC === 0) {
-      setUserGroup(data.data.DT);
+    if (data && data.EC === 0) {
+      setUserGroup(data.DT);
     } else {
-      message.error(data.data.EM);
+      message.error(data.EM);
     }
   };
   const handleOnChangeInput = (value, name) => {
@@ -63,13 +63,13 @@ const ModalCreate = (props) => {
     let check = checkValidInput();
     if (check === true) {
       let res = await createNewUser(userData);
-      if (res && res.data && res.data.EC === 0) {
+      if (res && res.EC === 0) {
         message.success("Create user success");
         props.onCancel();
         props.fetchUsers();
         form.resetFields(); // Reset form fields
       } else {
-        message.error(res.data.EM);
+        message.error(res.EM);
       }
     }
   };

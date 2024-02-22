@@ -35,8 +35,9 @@ const Users = () => {
 
   const fetchUsers = async () => {
     let res = await fetchAllUsers();
-    if (res && res.data && res.data.EC === 0) {
-      setListUser(res.data.DT);
+    console.log("res:", res);
+    if (res && res.EC === 0) {
+      setListUser(res.DT);
     }
   };
 
@@ -117,11 +118,11 @@ const Users = () => {
 
   const handleOk = async () => {
     let res = await deleteUsers(dataModal);
-    if (res && res.data && res.data.EC === 0) {
-      message.success(res.data.EM);
+    if (res && res.EC === 0) {
+      message.success(res.EM);
       await fetchUsers();
     } else {
-      message.error(res.data.EM);
+      message.error(res.EM);
     }
     setIsModalDeleteOpen(false);
   };

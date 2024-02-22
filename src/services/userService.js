@@ -1,38 +1,38 @@
-import axios from "axios";
+import axios from "../setup/axios";
 
 const registerNewUser = (email, password) => {
-  return axios.post("http://localhost:5000/api/v1/register", {
+  return axios.post("/api/v1/register", {
     email,
     password,
   });
 };
 const loginUser = (email, password) => {
-  return axios.post("http://localhost:5000/api/v1/login", {
+  return axios.post("/api/v1/login", {
     email,
     password,
   });
 };
 // const fetchAllUsers = (page, limit) => {
 //   return axios.get(
-//     `http://localhost:5000/api/v1/user/read?page=${page}&limit=${limit}`
+//     `/api/v1/user/read?page=${page}&limit=${limit}`
 //   );
 // };
 const fetchAllUsers = () => {
-  return axios.get("http://localhost:5000/api/v1/user/read");
+  return axios.get("/api/v1/user/read");
 };
 const deleteUsers = (user) => {
-  return axios.delete("http://localhost:5000/api/v1/user/delete", {
+  return axios.delete("/api/v1/user/delete", {
     data: { id: user.id },
   });
 };
 const fetchGroup = () => {
-  return axios.get("http://localhost:5000/api/v1/group/read");
+  return axios.get("/api/v1/group/read");
 };
 const createNewUser = (data) => {
-  return axios.post("http://localhost:5000/api/v1/user/create", { ...data });
+  return axios.post("/api/v1/user/create", { ...data });
 };
 const updateCurrentUser = (userData) => {
-  return axios.put("http://localhost:5000/api/v1/user/update", { ...userData });
+  return axios.put("/api/v1/user/update", { ...userData });
 };
 export {
   registerNewUser,
