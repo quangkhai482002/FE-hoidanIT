@@ -182,7 +182,6 @@ const ModalCreate = (props) => {
 
         <Form.Item label="Sex" name="sex">
           <Select
-            defaultValue={userData.sex}
             onChange={(value) => handleOnChangeInput(value, "sex")}
             // style={{
             //   width: 120,

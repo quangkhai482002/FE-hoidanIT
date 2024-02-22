@@ -200,6 +200,7 @@ const Users = () => {
 
         <div className="table-data">
           <Table
+            rowKey="id"
             columns={columns}
             dataSource={listUser}
             pagination={{

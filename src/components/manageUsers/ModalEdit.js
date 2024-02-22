@@ -174,7 +174,7 @@ const ModalEdit = (props) => {
 
         <Form.Item label="Sex" name="sex">
           <Select
-            defaultValue={userData.sex}
+            // defaultValue={userData.sex}
             onChange={(value) => handleOnChangeInput(value, "sex")}
             options={[
               {
