@@ -9,20 +9,15 @@ const AppRoutes = (props) => {
     <>
       <Routes>
         {/* private routes */}
-        {/* <Route
-          path="/users"
-          element={<PrivateRoutes path="/users" element={<Users />} />}
-        ></Route> */}
-        {/* <Route
-          path="/projects"
-          element={<PrivateRoutes path="/projects" element={<Project />} />}
-        ></Route> */}
+        <Route exact path="/users" element={<PrivateRoutes />}>
+          <Route exact path="/users" element={<Users />} />
+        </Route>
 
         {/* ==================== */}
 
         {/* navigate public */}
         <Route path="/">Home</Route>
-        <Route path="/users" element={<Users />}></Route>
+        {/* <Route path="/users" element={<Users />}></Route> */}
         <Route path="/new">New</Route>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/register" element={<Register />}></Route>

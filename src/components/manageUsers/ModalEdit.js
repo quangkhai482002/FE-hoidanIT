@@ -1,5 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Button, message, Modal, Input, Space, Form, Select } from "antd";
+import {
+  Button,
+  message,
+  Modal,
+  Input,
+  Space,
+  Form,
+  Select,
+  notification,
+} from "antd";
 import { fetchGroup, updateCurrentUser } from "../../services/userService";
 import _, { set } from "lodash";
 const ModalEdit = (props) => {
@@ -59,7 +68,11 @@ const ModalEdit = (props) => {
     // if (check === true) {
     let res = await updateCurrentUser(userData);
     if (res && res.EC === 0) {
-      message.success("Edit user success");
+      // message.success("Edit user success");
+      notification.success({
+        message: "Success",
+        description: res.EM,
+      });
       props.onCancel();
       props.fetchUsers();
     } else {

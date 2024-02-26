@@ -61,15 +61,18 @@ const Register = (props) => {
     // message.success("Đăng kí thành công!");
     let isValid = isValidInput();
     if (isValid === true) {
-      let response = await registerNewUser(email, password);
-      let serverData = response.data;
+      let serverData = await registerNewUser(email, password);
       if (+serverData.EC === 0) {
-        message.success(serverData.EM);
+        // message.success(serverData.EM);
+        notification.success({
+          message: "Success",
+          description: "Login success",
+        });
         navigate("/login");
       } else {
         message.error(serverData.EM);
       }
-      console.log(response);
+      // console.log(response);
     }
   };
 

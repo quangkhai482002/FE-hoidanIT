@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Button, Checkbox, Form, Input, message } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import "./login.scss";
 import logo from "../../assets/images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../services/userService";
+import { UserContext } from "../../context/UserContext";
 
 const onFinish = (values) => {
   console.log("Success:", values);
 };
 
 const Login = (props) => {
+  const { loginContext } = useContext(UserContext);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -27,13 +30,19 @@ const Login = (props) => {
     let response = await loginUser(email, password);
     if (response && +response.EC === 0) {
       // success
+      let groupWithRole = response.DT.groupWithRoles;
+      let email = response.DT.email;
+      let username = response.DT.username;
+      let token = response.DT.access_token;
       let data = {
         isAuthenticated: true,
-        token: "fake token",
+        token: token,
+        account: { groupWithRole, email, username },
       };
       sessionStorage.setItem("account", JSON.stringify(data));
+      loginContext(data);
       navigate("/users");
-      window.location.reload();
+      // window.location.reload();
 
       //redux
     }

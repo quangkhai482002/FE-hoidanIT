@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Button, message, Modal, Input, Space, Form, Select } from "antd";
+import {
+  Button,
+  message,
+  Modal,
+  Input,
+  Space,
+  Form,
+  Select,
+  notification,
+} from "antd";
 import { fetchGroup, createNewUser } from "../../services/userService";
 import _, { set } from "lodash";
 const ModalCreate = (props) => {
@@ -64,7 +73,11 @@ const ModalCreate = (props) => {
     if (check === true) {
       let res = await createNewUser(userData);
       if (res && res.EC === 0) {
-        message.success("Create user success");
+        // message.success("Create user success");
+        notification.success({
+          message: "Success",
+          description: "Create user success",
+        });
         props.onCancel();
         props.fetchUsers();
         form.resetFields(); // Reset form fields
@@ -82,7 +95,7 @@ const ModalCreate = (props) => {
     >
       <Form
         form={form}
-        name="normal_login"
+        name="create_user_form"
         className="login-form"
         initialValues={{
           remember: true,

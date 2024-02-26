@@ -1,9 +1,12 @@
 import axios from "axios";
+import { message } from "antd";
 
 // Set config defaults when creating the instance
 const instance = axios.create({
   baseURL: "http://localhost:5000",
 });
+
+instance.defaults.withCredentials = true;
 
 // // Alter defaults after instance has been created
 // instance.defaults.headers.common["Authorization"] = "AUTH_TOKEN 123";
@@ -30,7 +33,49 @@ instance.interceptors.response.use(
   function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
-    return Promise.reject(error);
+    const status = (error && error.response && error.response.status) || 500;
+    console.log("status", status);
+    // we can handle global errors here
+    switch (status) {
+      // authentication (token related issues)
+      case 401: {
+        message.error("Unauthorized please login !");
+        // window.location.href = "/login";
+        return Promise.reject(error);
+      }
+
+      // forbidden (permission related issues)
+      case 403: {
+        message.error("You don't have permission to access this recource");
+        return Promise.reject(error);
+      }
+
+      // bad request
+      case 400: {
+        return Promise.reject(error);
+      }
+
+      // not found
+      case 404: {
+        return Promise.reject(error);
+      }
+
+      // conflict
+      case 409: {
+        return Promise.reject(error);
+      }
+
+      // unprocessable
+      case 422: {
+        return Promise.reject(error);
+      }
+
+      // generic api error (server related) unexpected
+      default: {
+        return Promise.reject(error);
+      }
+    }
+    // return Promise.reject(error);
   }
 );
 

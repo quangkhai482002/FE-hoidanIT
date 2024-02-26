@@ -9,11 +9,12 @@ import {
   Table,
   Form,
   Select,
+  notification,
 } from "antd";
 import "./user.scss";
 import { fetchAllUsers, deleteUsers } from "../../services/userService";
 import { DeleteOutlined, EditOutlined, UserOutlined } from "@ant-design/icons";
-import { fetchGroup } from "../../services/userService";
+// import { fetchGroup } from "../../services/userService";
 import ModalDelete from "./ModalDelete";
 import ModalCreate from "./ModalCreate";
 import ModalEdit from "./ModalEdit";
@@ -35,7 +36,7 @@ const Users = () => {
 
   const fetchUsers = async () => {
     let res = await fetchAllUsers();
-    console.log("res:", res);
+    // console.log("res:", res);
     if (res && res.EC === 0) {
       setListUser(res.DT);
     }
@@ -119,10 +120,18 @@ const Users = () => {
   const handleOk = async () => {
     let res = await deleteUsers(dataModal);
     if (res && res.EC === 0) {
-      message.success(res.EM);
+      // message.success(res.EM);
+      notification.success({
+        message: "Success",
+        description: res.EM,
+      });
       await fetchUsers();
     } else {
-      message.error(res.EM);
+      // message.error(res.EM);
+      notification.success({
+        message: "Error",
+        description: res.EM,
+      });
     }
     setIsModalDeleteOpen(false);
   };
@@ -145,7 +154,7 @@ const Users = () => {
   };
   //==============   Edit user   ===================
   const handleEditUser = (record) => {
-    console.log("record", record);
+    // console.log("record", record);
     setDataModalUser(record);
     setIsModalEditOpen(true);
   };
